@@ -40,7 +40,7 @@ def moments(image, kind='all'):
         moments['m03'] = sum(x ** 3 * image)
         moments['m30'] = sum(y ** 3 * image)
 
-    if kind in ['all', 'central']:
+    if kind in ['all', 'central', 'standardized']:
         # central moments
         # moments['mu01']= sum((y-moments['mean_y'])*image) # should be 0
         # moments['mu10']= sum((x-moments['mean_x'])*image) # should be 0
@@ -62,13 +62,14 @@ def moments(image, kind='all'):
 
     if kind in ['all', 'standardized']:
         # central standardized or normalized or scale invariant moments
-        moments['nu11'] = moments['mu11'] / sum(image) ** (2 / 2 + 1)
-        moments['nu12'] = moments['mu12'] / sum(image) ** (3 / 2 + 1)
-        moments['nu21'] = moments['mu21'] / sum(image) ** (3 / 2 + 1)
-        moments['nu20'] = moments['mu20'] / sum(image) ** (2 / 2 + 1)
-        moments['nu02'] = moments['mu02'] / sum(image) ** (2 / 2 + 1)
-        moments['nu03'] = moments['mu03'] / sum(image) ** (3 / 2 + 1)  # skewness
-        moments['nu30'] = moments['mu30'] / sum(image) ** (3 / 2 + 1)  # skewness
+        sum_image = sum(image)
+        moments['nu11'] = moments['mu11'] / sum_image ** (2 / 2 + 1)
+        moments['nu12'] = moments['mu12'] / sum_image ** (3 / 2 + 1)
+        moments['nu21'] = moments['mu21'] / sum_image ** (3 / 2 + 1)
+        moments['nu20'] = moments['mu20'] / sum_image ** (2 / 2 + 1)
+        moments['nu02'] = moments['mu02'] / sum_image ** (2 / 2 + 1)
+        moments['nu03'] = moments['mu03'] / sum_image ** (3 / 2 + 1)  # skewness
+        moments['nu30'] = moments['mu30'] / sum_image ** (3 / 2 + 1)  # skewness
     return moments
 
 
@@ -95,15 +96,26 @@ def mu02_f(image):
 
 
 def hu_moments(image):
-    nu = moments(image, kind='standardized')
+    m = moments(image, kind='standardized')
     return [
-        nu['nu02'] + nu['nu20'],  # I1
-        (nu['nu20'] - nu['nu02']) ** 2 + 4. * nu['nu11'] ** 2,  # I2
-        # TODO: to finish
-        # I3
-        # I3
-        # I4
-        # I5
-        # I6
-        # I7
+        m['nu02'] + m['nu20'],  # I1
+
+        (m['nu20'] - m['nu02']) ** 2 + 4. * m['nu11'] ** 2,  # I2
+
+        (m['nu30'] - 3 * m['nu12']) ** 2 + (3 * m['nu21'] - m['nu03']),  # I3
+
+        (m['nu30'] + m['nu12']) ** 2 + (m['nu21'] + m['nu03']) ** 2,  # I4
+
+        (m['nu30'] - 3 * m['nu12']) * (m['nu30'] + m['nu12']) * (
+            (m['nu30'] + m['nu12']) ** 2 - 3 * (m['nu21'] + m['nu03']) ** 2)
+        + (3 * m['nu21'] - m['nu03']) * (m['nu21'] + m['nu03']) * (
+            3 * (m['nu30'] + m['nu12']) ** 2 - (m['nu21'] + m['nu03']) ** 2),  # I5
+
+        (m['nu20'] - m['nu02']) * ((m['nu30'] + m['nu12']) ** 2 - (m['nu21'] + m['nu30']) ** 2)
+        + 4 * m['nu11'] * (m['nu30'] + m['nu12']) * (m['nu21'] + m['nu03']),  # I6
+
+        (3 * m['nu21'] - m['nu03']) * (m['nu30'] + m['nu12']) * (
+            (m['nu03'] + m['nu12']) ** 2 - 3 * (m['nu21'] + m['nu03']) ** 2)
+        - (m['nu30'] - 3 * m['nu12']) * (m['nu21'] + m['nu03']) * (
+            3 * (m['nu30'] + m['nu12']) ** 2 - (m['nu21'] + m['nu03']) ** 2),  # I7
     ]
