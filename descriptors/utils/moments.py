@@ -96,6 +96,13 @@ def mu02_f(image):
 
 
 def hu_moments(image):
+    """
+    https://en.wikipedia.org/wiki/Image_moment
+
+    :param image: input image as array with signal set to 1 and background set to 0
+    :return: list of Hu moments [I_1, ..., I_7]
+    """
+    # TODO: perform same test
     m = moments(image, kind='standardized')
     return [
         m['nu02'] + m['nu20'],  # I1
