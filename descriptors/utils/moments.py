@@ -1,4 +1,9 @@
-from numpy import mgrid, sum
+from numpy import mgrid, float32
+from numpy import sum as sum_np
+
+
+def sum(array):
+    return sum_np(array, dtype=float32)
 
 
 def moments(image, kind='all'):
@@ -18,11 +23,11 @@ def moments(image, kind='all'):
     """
     assert len(image.shape) == 2  # only for grayscale images
     x, y = mgrid[:image.shape[0], :image.shape[1]]
-    moments = {}
+    moments = dict()
     moments['mean_x'] = sum(x * image) / sum(image)
     moments['mean_y'] = sum(y * image) / sum(image)
 
-    if kind in ['all', 'spatial']:
+    if kind in ['all', 'spatial', 'raw']:
         # raw or spatial moments
         moments['m00'] = sum(image)
         moments['m01'] = sum(x * image)
@@ -67,11 +72,34 @@ def moments(image, kind='all'):
     return moments
 
 
+def m00_f(image):
+    assert len(image.shape) == 2  # only for grayscale images
+
+    return sum(image)
+
+
+def mu20_f(image):
+    assert len(image.shape) == 2  # only for grayscale images
+
+    x, y = mgrid[:image.shape[0], :image.shape[1]]
+    mean_x = sum(x * image) / sum(image)
+    return sum((x - mean_x) ** 2 * image)
+
+
+def mu02_f(image):
+    assert len(image.shape) == 2  # only for grayscale images
+
+    x, y = mgrid[:image.shape[0], :image.shape[1]]
+    mean_y = sum(y * image) / sum(image)
+    return sum((y - mean_y) ** 2 * image)
+
+
 def hu_moments(image):
     nu = moments(image, kind='standardized')
     return [
         nu['nu02'] + nu['nu20'],  # I1
         (nu['nu20'] - nu['nu02']) ** 2 + 4. * nu['nu11'] ** 2,  # I2
+        # TODO: to finish
         # I3
         # I3
         # I4

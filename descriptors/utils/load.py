@@ -99,8 +99,8 @@ def load_dataset(dataset_name='MPEG7dataset', kind='all', black=0, white=1, size
 
         if np.unique(data).tolist() == [0, 255]:
             data = data // 255
-        elif np.unique(data).tolist() == [0, 1]:
-            pass
+        elif np.unique(data).tolist() == [0, 1] and dataset_name == 'regular_polygons':
+            data = data ^ 1
         else:
             raise ValueError("Wrong type of image")
 
@@ -114,6 +114,7 @@ def load_dataset(dataset_name='MPEG7dataset', kind='all', black=0, white=1, size
 
 if __name__ == "__main__":
     images = load_dataset('regular_polygons', kind='r03', size=1)
+    # images = load_dataset('MPEG7dataset', kind='apple', size=1)
     print(images)
     for v in images.values():
         print(np.unique(v))
