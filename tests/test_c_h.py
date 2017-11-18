@@ -1,12 +1,12 @@
 from unittest import TestCase
 
 from descriptors.circularity.c_h import C_h
-from descriptors.utils.load import load_dataset
+from descriptors.datasets import regular_polygons
 
 
 class Test_C_h(TestCase):
     def test_C_h(self):
-        images = load_dataset('regular_polygons')
+        images = regular_polygons.load_data()
         vals = {
             'r03': 0.827,
             'r04': 0.9549,
