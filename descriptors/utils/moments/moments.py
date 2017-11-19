@@ -2,7 +2,7 @@ from numpy import mgrid, float32
 from numpy import sum as sum_np
 
 
-def sum(array):
+def _sum(array):
     return sum_np(array, dtype=float32)
 
 
@@ -24,37 +24,37 @@ def moments(image, kind='all'):
     assert len(image.shape) == 2  # only for grayscale images
     x, y = mgrid[:image.shape[0], :image.shape[1]]
     moments = dict()
-    moments['mean_x'] = sum(x * image) / sum(image)
-    moments['mean_y'] = sum(y * image) / sum(image)
+    moments['mean_x'] = _sum(x * image) / _sum(image)
+    moments['mean_y'] = _sum(y * image) / _sum(image)
 
     if kind in ['all', 'spatial', 'raw']:
         # raw or spatial moments
-        moments['m00'] = sum(image)
-        moments['m01'] = sum(x * image)
-        moments['m10'] = sum(y * image)
-        moments['m11'] = sum(y * x * image)
-        moments['m02'] = sum(x ** 2 * image)
-        moments['m20'] = sum(y ** 2 * image)
-        moments['m12'] = sum(x * y ** 2 * image)
-        moments['m21'] = sum(x ** 2 * y * image)
-        moments['m03'] = sum(x ** 3 * image)
-        moments['m30'] = sum(y ** 3 * image)
+        moments['m00'] = _sum(image)
+        moments['m01'] = _sum(x * image)
+        moments['m10'] = _sum(y * image)
+        moments['m11'] = _sum(y * x * image)
+        moments['m02'] = _sum(x ** 2 * image)
+        moments['m20'] = _sum(y ** 2 * image)
+        moments['m12'] = _sum(x * y ** 2 * image)
+        moments['m21'] = _sum(x ** 2 * y * image)
+        moments['m03'] = _sum(x ** 3 * image)
+        moments['m30'] = _sum(y ** 3 * image)
 
     if kind in ['all', 'central', 'standardized']:
         # central moments
-        # moments['mu01']= sum((y-moments['mean_y'])*image) # should be 0
-        # moments['mu10']= sum((x-moments['mean_x'])*image) # should be 0
-        moments['mu11'] = sum((x - moments['mean_x']) * (y - moments['mean_y']) * image)
-        moments['mu02'] = sum((y - moments['mean_y']) ** 2 * image)  # variance
-        moments['mu20'] = sum((x - moments['mean_x']) ** 2 * image)  # variance
-        moments['mu12'] = sum((x - moments['mean_x']) * (y - moments['mean_y']) ** 2 * image)
-        moments['mu21'] = sum((x - moments['mean_x']) ** 2 * (y - moments['mean_y']) * image)
-        moments['mu03'] = sum((y - moments['mean_y']) ** 3 * image)
-        moments['mu30'] = sum((x - moments['mean_x']) ** 3 * image)
+        # moments['mu01']= _sum((y-moments['mean_y'])*image) # should be 0
+        # moments['mu10']= _sum((x-moments['mean_x'])*image) # should be 0
+        moments['mu11'] = _sum((x - moments['mean_x']) * (y - moments['mean_y']) * image)
+        moments['mu02'] = _sum((y - moments['mean_y']) ** 2 * image)  # variance
+        moments['mu20'] = _sum((x - moments['mean_x']) ** 2 * image)  # variance
+        moments['mu12'] = _sum((x - moments['mean_x']) * (y - moments['mean_y']) ** 2 * image)
+        moments['mu21'] = _sum((x - moments['mean_x']) ** 2 * (y - moments['mean_y']) * image)
+        moments['mu03'] = _sum((y - moments['mean_y']) ** 3 * image)
+        moments['mu30'] = _sum((x - moments['mean_x']) ** 3 * image)
 
     # opencv versions
-    # moments['mu02'] = sum(image*(x-m01/m00)**2)
-    # moments['mu02'] = sum(image*(x-y)**2)
+    # moments['mu02'] = _sum(image*(x-m01/m00)**2)
+    # moments['mu02'] = _sum(image*(x-y)**2)
 
     # wiki variations
     # moments['mu02'] = m20 - mean_y*m10
@@ -62,7 +62,7 @@ def moments(image, kind='all'):
 
     if kind in ['all', 'standardized']:
         # central standardized or normalized or scale invariant moments
-        sum_image = sum(image)
+        sum_image = _sum(image)
         moments['nu11'] = moments['mu11'] / sum_image ** (2 / 2 + 1)
         moments['nu12'] = moments['mu12'] / sum_image ** (3 / 2 + 1)
         moments['nu21'] = moments['mu21'] / sum_image ** (3 / 2 + 1)
@@ -73,26 +73,26 @@ def moments(image, kind='all'):
     return moments
 
 
-def m00_f(image):
+def m00(image):
     assert len(image.shape) == 2  # only for grayscale images
 
-    return sum(image)
+    return _sum(image)
 
 
-def mu20_f(image):
-    assert len(image.shape) == 2  # only for grayscale images
-
-    x, y = mgrid[:image.shape[0], :image.shape[1]]
-    mean_x = sum(x * image) / sum(image)
-    return sum((x - mean_x) ** 2 * image)
-
-
-def mu02_f(image):
+def mu20(image):
     assert len(image.shape) == 2  # only for grayscale images
 
     x, y = mgrid[:image.shape[0], :image.shape[1]]
-    mean_y = sum(y * image) / sum(image)
-    return sum((y - mean_y) ** 2 * image)
+    mean_x = _sum(x * image) / _sum(image)
+    return _sum((x - mean_x) ** 2 * image)
+
+
+def mu02(image):
+    assert len(image.shape) == 2  # only for grayscale images
+
+    x, y = mgrid[:image.shape[0], :image.shape[1]]
+    mean_y = _sum(y * image) / _sum(image)
+    return _sum((y - mean_y) ** 2 * image)
 
 
 def hu_moments(image):

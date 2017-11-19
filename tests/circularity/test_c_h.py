@@ -8,11 +8,11 @@ class Test_C_h(TestCase):
     def test_C_h(self):
         images = regular_polygons.load_data()
         vals = {
-            'r03': 0.827,
+            'r03': 0.8270,
             'r04': 0.9549,
             'r05': 0.9833,
             'r06': 0.9924,
-            'r07': 0.996,
+            'r07': 0.9960,
             'r08': 0.9977,
             'r09': 0.9986,
             'r10': 0.9991,
