@@ -22,7 +22,7 @@ def moments(image, kind='all'):
     cv2.moments(image)
     """
     assert len(image.shape) == 2  # only for grayscale images
-    x, y = mgrid[:image.shape[0], :image.shape[1]]
+    y, x = mgrid[:image.shape[0], :image.shape[1]]
     moments = dict()
     moments['mean_x'] = _sum(x * image) / _sum(image)
     moments['mean_y'] = _sum(y * image) / _sum(image)
@@ -30,27 +30,28 @@ def moments(image, kind='all'):
     if kind in ['all', 'spatial', 'raw']:
         # raw or spatial moments
         moments['m00'] = _sum(image)
-        moments['m01'] = _sum(x * image)
-        moments['m10'] = _sum(y * image)
-        moments['m11'] = _sum(y * x * image)
-        moments['m02'] = _sum(x ** 2 * image)
-        moments['m20'] = _sum(y ** 2 * image)
+        moments['m10'] = _sum(x * image)
+        moments['m01'] = _sum(y * image)
+        moments['m11'] = _sum(x * y * image)
+        moments['m20'] = _sum(x ** 2 * image)
+        moments['m02'] = _sum(y ** 2 * image)
         moments['m12'] = _sum(x * y ** 2 * image)
         moments['m21'] = _sum(x ** 2 * y * image)
-        moments['m03'] = _sum(x ** 3 * image)
-        moments['m30'] = _sum(y ** 3 * image)
+        moments['m30'] = _sum(x ** 3 * image)
+        moments['m03'] = _sum(y ** 3 * image)
 
     if kind in ['all', 'central', 'standardized']:
         # central moments
-        # moments['mu01']= _sum((y-moments['mean_y'])*image) # should be 0
-        # moments['mu10']= _sum((x-moments['mean_x'])*image) # should be 0
+        moments['mu00'] = _sum(image)  # = moments['m00']
+        moments['mu10'] = _sum((x - moments['mean_x']) * image)  # should be 0
+        moments['mu01'] = _sum((y - moments['mean_y']) * image)  # should be 0
         moments['mu11'] = _sum((x - moments['mean_x']) * (y - moments['mean_y']) * image)
-        moments['mu02'] = _sum((y - moments['mean_y']) ** 2 * image)  # variance
         moments['mu20'] = _sum((x - moments['mean_x']) ** 2 * image)  # variance
+        moments['mu02'] = _sum((y - moments['mean_y']) ** 2 * image)  # variance
         moments['mu12'] = _sum((x - moments['mean_x']) * (y - moments['mean_y']) ** 2 * image)
         moments['mu21'] = _sum((x - moments['mean_x']) ** 2 * (y - moments['mean_y']) * image)
-        moments['mu03'] = _sum((y - moments['mean_y']) ** 3 * image)
         moments['mu30'] = _sum((x - moments['mean_x']) ** 3 * image)
+        moments['mu03'] = _sum((y - moments['mean_y']) ** 3 * image)
 
     # opencv versions
     # moments['mu02'] = _sum(image*(x-m01/m00)**2)
@@ -63,6 +64,10 @@ def moments(image, kind='all'):
     if kind in ['all', 'standardized']:
         # central standardized or normalized or scale invariant moments
         sum_image = _sum(image)
+        moments['nu00'] = moments['mu00'] / moments['mu00'] ** (0 / 2 + 1)  # = 1
+        moments['nu10'] = moments['mu10'] / moments['mu00'] ** (1 / 2 + 1)  # = 0
+        moments['nu01'] = moments['mu01'] / moments['mu00'] ** (1 / 2 + 1)  # = 0
+
         moments['nu11'] = moments['mu11'] / sum_image ** (2 / 2 + 1)
         moments['nu12'] = moments['mu12'] / sum_image ** (3 / 2 + 1)
         moments['nu21'] = moments['mu21'] / sum_image ** (3 / 2 + 1)
@@ -105,11 +110,11 @@ def hu_moments(image):
     # TODO: perform same test
     m = moments(image, kind='standardized')
     return [
-        m['nu02'] + m['nu20'],  # I1
+        m['nu20'] + m['nu02'],  # I1
 
         (m['nu20'] - m['nu02']) ** 2 + 4. * m['nu11'] ** 2,  # I2
 
-        (m['nu30'] - 3 * m['nu12']) ** 2 + (3 * m['nu21'] - m['nu03']),  # I3
+        (m['nu30'] - 3 * m['nu12']) ** 2 + (3 * m['nu21'] - m['nu03']) ** 2,  # I3
 
         (m['nu30'] + m['nu12']) ** 2 + (m['nu21'] + m['nu03']) ** 2,  # I4
 
@@ -118,11 +123,11 @@ def hu_moments(image):
         + (3 * m['nu21'] - m['nu03']) * (m['nu21'] + m['nu03']) * (
             3 * (m['nu30'] + m['nu12']) ** 2 - (m['nu21'] + m['nu03']) ** 2),  # I5
 
-        (m['nu20'] - m['nu02']) * ((m['nu30'] + m['nu12']) ** 2 - (m['nu21'] + m['nu30']) ** 2)
+        (m['nu20'] - m['nu02']) * ((m['nu30'] + m['nu12']) ** 2 - (m['nu21'] + m['nu03']) ** 2)
         + 4 * m['nu11'] * (m['nu30'] + m['nu12']) * (m['nu21'] + m['nu03']),  # I6
 
         (3 * m['nu21'] - m['nu03']) * (m['nu30'] + m['nu12']) * (
-            (m['nu03'] + m['nu12']) ** 2 - 3 * (m['nu21'] + m['nu03']) ** 2)
+            (m['nu30'] + m['nu12']) ** 2 - 3 * (m['nu21'] + m['nu03']) ** 2)
         - (m['nu30'] - 3 * m['nu12']) * (m['nu21'] + m['nu03']) * (
             3 * (m['nu30'] + m['nu12']) ** 2 - (m['nu21'] + m['nu03']) ** 2),  # I7
     ]
