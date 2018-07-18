@@ -1,8 +1,7 @@
-import math
 from descriptors.utils.moments.moments import moments
 
 
-def triangularity(image, method='mbr'):
+def triangularity(image, method='moment_invariants'):
     """
     There are 4 methods to define triangularity:
     Moment invariants: T_I
