@@ -17,6 +17,7 @@ def ellipticity(image, method='moment_invariants'):
     """
     if method == 'moment_invariants':
         m = moments(image)
+        # I_1 pierwszy moment afiniczny
         i_1 = (m['mu20'] * m['mu02'] - m['mu11'] ** 2) / m['mu00'] ** 4
 
         # I_1 for unit radius circle

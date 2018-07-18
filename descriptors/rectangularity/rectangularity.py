@@ -67,13 +67,3 @@ def rectangularity(image, method='mbr'):
         return region_area / mbr_area
     else:
         print("Wrong method.")
-
-
-from diCELLa_image.com.dicella.image.io.load import load
-from diCELLa_INDeep.utils.utils import show_image
-
-img = load('../../tests/example_images/example_rectangular2.png')
-img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-img[img > 0] = 1
-
-print(rectangularity(image=img))
