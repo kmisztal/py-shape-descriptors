@@ -6,6 +6,14 @@ from descriptors.utils import moments as m
 
 
 def circularity(image, method='Ch'):
+    """
+    Function defines two methods of computing circularity.
+    C_H: uses Hu moments
+    C_st: compares area to perimeter
+    :param image:  np.ndarray, binary mask
+    :param method: method
+    :return: float \in [0, 1]
+    """
     if method == 'Ch':
         m00 = m.m00(image)
 

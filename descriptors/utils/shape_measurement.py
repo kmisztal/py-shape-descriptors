@@ -4,7 +4,8 @@ import numpy as np
 
 
 def is_edge(img, i, j):
-    if img.getRed[i, j] != 0:
+    # if img.getRed[i, j] != 0:
+    if img[i, j] != 0:
         return False
 
     height, width = img.shape
@@ -30,8 +31,8 @@ def perimeter(img):
     num_matrix = np.zeros((height, width), dtype=np.int)  # 0-background 1-perimeter
 
     perimeter_ = 0
-    for i in range(width):
-        for j in range(height):
+    for i in range(height):  # zamiana z: width
+        for j in range(width):  # zamiana z: height
             if img[i, j] == 0:
                 if is_edge(img, i, j):
                     num_matrix[i][j] = 1
@@ -51,7 +52,7 @@ def perimeter(img):
             yMax = y + 1
             for r in range(yMin, yMax + 1):
                 for c in range(xMin, xMax + 1):
-                    if 0 <= r < height and 0 <= c < width:
+                    if 0 <= r < width and 0 <= c < height:  # zamiana z: if 0 <= r < height and 0 <= c < width:
                         num_output[y * width + x] += num_matrix[c][r] * kernel[(r - yMin) * 3 + (c - xMin)]
 
     # perimeter calc

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from descriptors.circularity.c_h import C_h
+from descriptors.circularity.circularity import C_h
 from descriptors.datasets import regular_polygons
 
 
