@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 # https://docs.opencv.org/3.4/dd/d49/tutorial_py_contour_features.html
-
+from diCELLa_INDeep.utils.utils import show_image
 # need compute minimum bounding rectangle
 # Algorytm:
 # weź maskę
@@ -31,9 +31,10 @@ import numpy as np
 # https://docs.opencv.org/3.1.0/dc/da5/tutorial_py_drawing_functions.html
 # show_image(cv2.polylines(img, [box.reshape(-1,1,2).astype(np.int32)], True, 3))
 
+
 def rectangularity(image, method='mbr'):
     """
-    There are 3 methods to define ellipticity:
+    There are 3 methods to define rectangularity:
     Minimum bounding rectangle: MBR
     Rectangular discrepancy: R'_D
     Robust MBR: R_R
