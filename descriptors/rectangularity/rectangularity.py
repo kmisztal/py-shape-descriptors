@@ -47,6 +47,7 @@ def rectangularity(image, method='mbr'):
     if method == 'mbr':
         # mode: https://docs.opencv.org/3.4.0/d3/dc0/group__imgproc__shape.html#ga819779b9857cc2f8601e6526a3a5bc71
         # method: https://docs.opencv.org/3.4.0/d3/dc0/group__imgproc__shape.html#ga4303f45752694956374734a03c54d5ff
+        image[image > 0] = 1
         im2, contours, hierarchy = cv2.findContours(image, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) != 1:
             print("More than one blob?")
@@ -57,12 +58,12 @@ def rectangularity(image, method='mbr'):
         # https://docs.opencv.org/3.4/d3/dc0/group__imgproc__shape.html#gaf78d467e024b4d7936cf9397185d2f5c
         box = cv2.boxPoints(rect)
         box = np.int0(box)
-        mbr_area = cv2.contourArea(box)
 
-        show_image(cv2.polylines(image, [box.reshape(-1, 1, 2)], True, 3))
-
-        image[image > 0] = 1
         region_area = np.sum(image)
+
+        cv2.fillConvexPoly(image, box, 1)  # funkcja modyfikuje image!
+        mbr_area = np.sum(image)
+
         print(region_area)
         print(mbr_area)
         return region_area / mbr_area
