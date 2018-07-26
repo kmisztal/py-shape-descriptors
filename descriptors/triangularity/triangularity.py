@@ -11,7 +11,8 @@ def triangularity(image, method='moment_invariants'):
     http://dicella.chrispi.webfactional.com/wp-content/uploads/2018/07/download.pdf
 
     This function implements the moment invariants so far.
-    :param image: np.ndarray: Source, an 8-bit single-channel image. Non-zero pixels are treated as 1's. Zero pixels remain 0's, so the image is treated as binary.
+    :param image: np.ndarray: binary mask
+    :param method: method
     :return: float \in [0, 1]
     """
     if method == 'moment_invariants':
@@ -23,11 +24,6 @@ def triangularity(image, method='moment_invariants'):
         if i_1 <= it:
             return i_1 / it
         else:
-            return i_1 * it
+            return it / i_1
     else:
         print("Wrong method.")
-
-
-
-
-
