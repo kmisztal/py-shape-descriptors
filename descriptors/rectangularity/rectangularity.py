@@ -61,11 +61,12 @@ def rectangularity(image, method='mbr'):
 
         region_area = np.sum(image)
 
+        image = image.copy()
         cv2.fillConvexPoly(image, box, 1)  # funkcja modyfikuje image!
         mbr_area = np.sum(image)
 
-        print(region_area)
-        print(mbr_area)
+        # print(region_area)
+        # print(mbr_area)
         return region_area / mbr_area
     else:
         print("Wrong method.")
