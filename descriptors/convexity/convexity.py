@@ -46,10 +46,10 @@ def convexity(image, method='perimeters_ratio', approx_contour=True):
 
         perimeter_convex_hull = cv2.arcLength(hull, True)
 
-        print("Len cnt:", len(cnt))
-        print("Len hull:", len(hull))
-        print("Obwód cv2:", perimeter)
-        print("Obwód otoczki cv2:", perimeter_convex_hull)
+        # print("Len cnt:", len(cnt))
+        # print("Len hull:", len(hull))
+        # print("Obwód cv2:", perimeter)
+        # print("Obwód otoczki cv2:", perimeter_convex_hull)
 
         return perimeter_convex_hull / perimeter
     else:
