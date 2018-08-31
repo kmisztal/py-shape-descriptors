@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from warnings import warn
 
-from diCELLa_INDeep.utils.utils import show_image
+from diCELLa_INDeep.utils.img_plotting import show_image
 
 # based on https://pdfs.semanticscholar.org/cd7d/a1577c985e6d1ed6c19a276e24246e81c20d.pdf
 # Perimeter of convex hull / Perimeter of mask

@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 # https://docs.opencv.org/3.4/dd/d49/tutorial_py_contour_features.html
-from diCELLa_INDeep.utils.utils import show_image
+from diCELLa_INDeep.utils.img_plotting import show_image
 # need compute minimum bounding rectangle
 # Algorytm:
 # weź maskę
